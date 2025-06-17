@@ -1,0 +1,20 @@
+{
+  "name": "AzurePostgresMCP",
+  "description": "An MCP server to query Azure PostgreSQL using SQL",
+  "actions": [
+    {
+      "name": "run_postgres_query",
+      "description": "Runs a SQL query on Azure PostgreSQL",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "The SQL query to run"
+          }
+        },
+        "required": ["question"]
+      }
+    }
+  ]
+}
