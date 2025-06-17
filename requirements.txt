@@ -1,3 +1,6 @@
 aiohttp
 psycopg2-binary
 python-dotenv
+openai
+psycopg2
+python-dotenv
