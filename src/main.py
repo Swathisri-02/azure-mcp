@@ -1,19 +1,29 @@
 from aiohttp import web
 import json
 from handlers.postgres_handler import query_postgres
+from handlers.nl_sql_utils import get_table_schema, nl_to_sql
 
 routes = web.RouteTableDef()
 
 @routes.post("/api/actions/run_postgres_query")
-async def run_query(request):
+async def run_postgres_query(request):
     try:
         body = await request.json()
-        question = body.get("input", {}).get("question")
-        if not question:
-            return web.json_response({"error": "Missing 'question'"}, status=400)
-        
-        results = query_postgres(question)
-        return web.json_response({"type": "message", "message": results})
+        nl_question = body["input"]["question"]
+
+        # Hardcoded table for now — we can extract it later with GPT
+        table_name = "transactions_2021"
+        schema_str = get_table_schema(table_name)
+        sql_query = nl_to_sql(nl_question, schema_str)
+        result = query_postgres(sql_query)
+
+        return web.json_response({
+            "type": "message",
+            "message": {
+                "query": sql_query,
+                "result": result
+            }
+        })
 
     except Exception as e:
         return web.json_response({"error": str(e)}, status=500)
